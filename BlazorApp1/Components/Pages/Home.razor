@@ -1,0 +1,51 @@
+﻿@page "/"
+@using BlazorApp1.ViewModels
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+@if(!string.IsNullOrWhiteSpace(_message))
+{
+    <p>@_message</p>
+}
+
+<EditForm Model="PersonViewModel" FormName="personForm" OnValidSubmit="HandleValidSubmit">
+    <label>
+        @* DisplayName で表示できる！ *@
+        <DisplayName For="() => PersonViewModel.LastName" />
+        <InputText @bind-Value="PersonViewModel.LastName" />
+    </label>
+    <label>
+        @* DisplayName で表示できる！ *@
+        <DisplayName For="() => PersonViewModel.FirstName" />
+        <InputText @bind-Value="PersonViewModel.FirstName" />
+    </label>
+
+    <input type="submit" />
+</EditForm>
+
+@code {
+    private PersonViewModel? _personViewModel;
+    private string? _message;
+
+    [SupplyParameterFromForm(FormName = "personForm")]
+    public PersonViewModel PersonViewModel
+    {
+        get => _personViewModel ??
+            throw new InvalidOperationException("PersonViewModel is not initialized.");
+        set => _personViewModel = value;
+    }
+
+    protected override void OnInitialized()
+    {
+        _personViewModel ??= new();
+    }
+
+    private void HandleValidSubmit()
+    {
+        // 入力を受け取ってメッセージを作成する
+        _message = $"Hello, {PersonViewModel.FirstName} {PersonViewModel.LastName}!";
+        _personViewModel = new();
+    }
+}
