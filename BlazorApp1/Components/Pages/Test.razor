@@ -1,0 +1,38 @@
+﻿@page "/test"
+@inject NavigationManager NavigationManager
+@using BlazorApp1.ViewModels
+
+<h2>Test</h2>
+
+@* TempData に格納されたメッセージをここで表示する *@
+<p>@Message</p>
+
+<form method="post" @onsubmit="HandleSubmit" @formname="form1">
+    <input type="submit" />
+</form>
+
+@code {
+
+    @* TempData は CascadingParameter で提供される *@
+    [CascadingParameter]
+    public ITempData? TempData { get; set; }
+
+    @* ここに TempData から取得した値をセットする *@
+    public string? Message { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // TempData から値を取得して成功したら Message に格納する
+        if (TempData?.TryGetValue("Message", out var message) == true)
+        {
+            Message = message as string;
+        }
+    }
+
+    private void HandleSubmit()
+    {
+        // サブミット時にメッセージを TempData に格納して再度 test を表示する
+        TempData?.Add("Message", $"フォームが送信されました！ {DateTime.Now}");
+        NavigationManager.NavigateTo("test");
+    }
+}

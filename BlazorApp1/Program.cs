@@ -6,7 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents();
 
 var app = builder.Build();
+// /myapp 配下にアプリを配置する場合は、UsePathBaseを使用してパスベースを設定します。
 app.UsePathBase("/myapp");
+// UsePathBaseを使用する場合は、UseRoutingの前に呼び出す必要があります。
+app.UseRouting();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
