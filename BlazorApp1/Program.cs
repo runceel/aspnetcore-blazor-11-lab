@@ -3,11 +3,11 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 var app = builder.Build();
 // /myapp 配下にアプリを配置する場合は、UsePathBaseを使用してパスベースを設定します。
-app.UsePathBase("/myapp");
+app.UsePathBase("/myapp/");
 // UsePathBaseを使用する場合は、UseRoutingの前に呼び出す必要があります。
 app.UseRouting();
 
@@ -22,6 +22,6 @@ app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages:
 app.UseHttpsRedirection();
 
 app.MapStaticAssets();
-app.MapRazorComponents<App>();
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 app.Run();

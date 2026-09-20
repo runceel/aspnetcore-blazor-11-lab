@@ -1,0 +1,40 @@
+﻿@page "/asyncvalidation"
+@using BlazorApp1.ViewModels
+
+<h2>AsyncValidation</h2>
+
+@if (!string.IsNullOrEmpty(_message))
+{
+    <p>@_message</p>
+}
+
+<EditForm Model="ViewModel" FormName="Form1" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <label>
+        <DisplayName For="() => ViewModel!.Name" />
+        <InputText @bind-Value="ViewModel!.Name" />
+        <ValidationMessage For="() => ViewModel!.Name" />
+    </label>
+
+    <button type="submit">Submit</button>
+</EditForm>
+
+@code {
+    private string _message = "";
+
+    [SupplyParameterFromForm(FormName = "Form1")]
+    private AsyncValidationViewModel? ViewModel { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ViewModel ??= new();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        _ = ViewModel ?? throw new InvalidOperationException("ViewModel is null.");
+
+        _message = $"Form submitted successfully. Name: {ViewModel.Name}";
+        ViewModel = new();
+    }
+}

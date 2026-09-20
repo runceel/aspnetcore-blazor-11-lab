@@ -1,0 +1,18 @@
+﻿@page "/sub/home"
+@rendermode RenderMode.InteractiveServer
+@inject NavigationManager NavigationManager
+<h2>Sub</h2>
+
+<button @onclick="NavigateToWeather">Go to weather</button>
+
+@code {
+
+    private void NavigateToWeather()
+    {
+        // options で RelativeToCurrentUri = true を指定することで、現在の URL を基準に相対パスで遷移するようにできる
+        NavigationManager.NavigateTo("./weather", options: new()
+        {
+            RelativeToCurrentUri = true,
+        });
+    }
+}
