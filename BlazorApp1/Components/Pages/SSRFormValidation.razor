@@ -1,35 +1,33 @@
-﻿@page "/asyncvalidation"
+﻿@page "/ssrformvalidation"
 @using BlazorApp1.ViewModels
-
-<h2>AsyncValidation</h2>
-
-@if (!string.IsNullOrEmpty(_message))
-{
-    <p>@_message</p>
-}
+<h2>SSRFormValidation</h2>
 
 @{
     _ = ViewModel ?? throw new InvalidOperationException("ViewModel is null.");
 }
 
-<EditForm Model="ViewModel" FormName="Form1" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+<p>@_message</p>
+
+<EditForm Model="ViewModel" FormName="Form1" OnValidSubmit="HandleValidSubmit" Enhance>
     <DataAnnotationsValidator />
     <div>
         <Label For="() => ViewModel.Name" />
         <InputText @bind-Value="ViewModel.Name" />
         <ValidationMessage For="() => ViewModel.Name" />
     </div>
-
+    <div>
+        <Label For="() => ViewModel.Description" />
+        <InputText @bind-Value="ViewModel.Description" />
+        <ValidationMessage For="() => ViewModel.Description" />
+    </div>
     <button type="submit">Submit</button>
-
-    <ValidationSummary />
 </EditForm>
 
 @code {
     private string _message = "";
 
     [SupplyParameterFromForm(FormName = "Form1")]
-    private AsyncValidationViewModel? ViewModel { get; set; }
+    private SSRFormValidationViewModel? ViewModel { get; set; }
 
     protected override void OnInitialized()
     {
@@ -39,16 +37,9 @@
     private async Task HandleValidSubmit()
     {
         _ = ViewModel ?? throw new InvalidOperationException("ViewModel is null.");
-
+        // 入力を受け取ってメッセージを作成する
         _message = $"Form submitted successfully. Name: {ViewModel.Name}";
+        // フォームの状態をリセットする
         ViewModel = new();
-    }
-
-    private void HandleInvalidSubmit(EditContext editContext)
-    {
-        _ = ViewModel ?? throw new InvalidOperationException("ViewModel is null.");
-
-        var errorMessages = editContext.GetValidationMessages();
-        _message = "Form submission failed due to validation errors.";
     }
 }

@@ -1,0 +1,31 @@
+﻿@page "/chat-ui"
+@rendermode InteractiveServer
+<h2>ChatUI</h2>
+
+<div style="width: 500px; height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 8px;">
+    <Virtualize Items="_messages"
+                InitialItemIndex="@(_messages.Count - 1)"
+                AnchorMode="VirtualizeAnchorMode.End">
+        <div class="border rounded p-2 mb-2">@context</div>
+    </Virtualize>
+</div>
+
+<div class="d-flex gap-2 mt-2" style="width: 500px;">
+    <input class="form-control" @bind="_message" />
+    <button class="btn btn-primary" @onclick="Send">送信</button>
+</div>
+
+@code {
+    private readonly List<string> _messages =
+        Enumerable.Range(1, 30).Select(i => $"メッセージ {i}").ToList();
+    private string _message = "";
+
+    private void Send()
+    {
+        if (!string.IsNullOrWhiteSpace(_message))
+        {
+            _messages.Add(_message);
+            _message = "";
+        }
+    }
+}

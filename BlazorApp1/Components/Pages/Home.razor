@@ -11,16 +11,14 @@
 }
 
 <EditForm Model="PersonViewModel" FormName="personForm" OnValidSubmit="HandleValidSubmit">
-    <label>
-        @* DisplayName で表示できる！ *@
-        <DisplayName For="() => PersonViewModel.LastName" />
+    @* Label コンポーネントでスッキリ！ *@
+    <Label For="() => PersonViewModel.LastName">
         <InputText @bind-Value="PersonViewModel.LastName" />
-    </label>
-    <label>
-        @* DisplayName で表示できる！ *@
-        <DisplayName For="() => PersonViewModel.FirstName" />
+    </Label>
+    @* Label コンポーネントでスッキリ！ *@
+    <Label For="() => PersonViewModel.FirstName">
         <InputText @bind-Value="PersonViewModel.FirstName" />
-    </label>
+    </Label>
 
     <input type="submit" />
 </EditForm>

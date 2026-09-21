@@ -1,0 +1,71 @@
+﻿@page "/virtualize-lab"
+@rendermode RenderMode.InteractiveServer
+<h2>VirtualizeLab</h2>
+
+<div>
+    <input type="text" @bind="_scrollTo" />
+    <button @onclick="ScrollTo">指定行にスクロール</button>
+    <button @onclick="ScrollToTop">行頭へスクロール</button>
+    <button @onclick="ScrollToBottom">末尾へスクロール</button>
+</div>
+
+<div style="width: 100%; max-width: 700px; height: 500px; overflow-y: auto;">
+    <div class="row fw-bold border-bottom">
+        <div class="col-1">Id</div>
+        <div class="col-2">Name</div>
+        <div class="col-9">Description</div>
+    </div>
+
+    <Virtualize @ref="_virtualize"
+                ItemsProvider="ProvideItemsAsync"
+                ItemComparer="EqualityComparer<RecordItem>.Default">
+        <div class="row border-bottom py-1">
+            <div class="col-1">@context.Id</div>
+            <div class="col-2">@context.Name</div>
+            <div class="col-9 text-break">@context.Description</div>
+        </div>
+    </Virtualize>
+</div>
+
+@code {
+    const int MaxCount = 100000;
+    private Virtualize<RecordItem>? _virtualize;
+
+    private int _scrollTo;
+
+    record RecordItem(
+        int Id,
+        string Name,
+        string Description
+    );
+
+    private async ValueTask<ItemsProviderResult<RecordItem>> ProvideItemsAsync(ItemsProviderRequest request)
+    {
+        // 10 万行の中からリクエストされたデータを返す
+        return new(
+            Enumerable.Range(request.StartIndex, request.Count)
+                .Take(MaxCount - request.StartIndex)
+                .Select(i => new RecordItem(
+                    i, $"Name {i}",
+                    $"Description {i}: {new string('x', 100 + i % 190)}")),
+            MaxCount);
+    }
+
+    private async Task ScrollTo()
+    {
+        _ = _virtualize ?? throw new InvalidOperationException("Virtualize コンポーネントが見つかりません。");
+        await _virtualize.ScrollToItemAsync(_scrollTo);
+    }
+
+    private async Task ScrollToTop()
+    {
+        _ = _virtualize ?? throw new InvalidOperationException("Virtualize コンポーネントが見つかりません。");
+        await _virtualize.ScrollToItemAsync(0);
+    }
+
+    private async Task ScrollToBottom()
+    {
+        _ = _virtualize ?? throw new InvalidOperationException("Virtualize コンポーネントが見つかりません。");
+        await _virtualize.ScrollToItemAsync(MaxCount - 1);
+    }
+}
