@@ -12,17 +12,20 @@
     _ = ViewModel ?? throw new InvalidOperationException("ViewModel is null.");
 }
 
-<EditForm Model="ViewModel" FormName="Form1" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+<EditForm Model="ViewModel" FormName="Form1" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
+    <ValidationSummary Model="ViewModel" />
     <div>
         <Label For="() => ViewModel.Name" />
         <InputText @bind-Value="ViewModel.Name" />
-        <ValidationMessage For="() => ViewModel.Name" />
+        @* ValidationMessage から置き換え！ *@
+        <AsyncFieldStatus For="() => ViewModel.Name"
+            PendingMessage="Validation pending..."
+            FaultedMessage="Validation faulted."
+            AvailableMessage="Validation available." />
     </div>
 
     <button type="submit">Submit</button>
-
-    <ValidationSummary />
 </EditForm>
 
 @code {
@@ -42,13 +45,5 @@
 
         _message = $"Form submitted successfully. Name: {ViewModel.Name}";
         ViewModel = new();
-    }
-
-    private void HandleInvalidSubmit(EditContext editContext)
-    {
-        _ = ViewModel ?? throw new InvalidOperationException("ViewModel is null.");
-
-        var errorMessages = editContext.GetValidationMessages();
-        _message = "Form submission failed due to validation errors.";
     }
 }

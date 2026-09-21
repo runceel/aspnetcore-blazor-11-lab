@@ -22,7 +22,7 @@ public class UniqueNameAttribute : AsyncValidationAttribute
         // 本来なら DB とかにアクセスしてユニークかどうかチェックするけど取り合えず固定値で
         if (value is string name && name == "Kazuki")
         {
-            return new ValidationResult("Name must be unique.");
+            return new ValidationResult("Name must be unique.", validationContext.MemberName is null ? null : [validationContext.MemberName]);
         }
 
         return ValidationResult.Success;
